@@ -1,0 +1,23 @@
+/* Add to your existing CSS (e.g., parallax.css) */
+
+.form-transition-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.form-transition-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.form-transition-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.form-transition-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}

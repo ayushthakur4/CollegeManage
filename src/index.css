@@ -1,0 +1,37 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+ } 
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 15s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom hover and click color for buttons and links */
+@layer utilities {
+  .hover\:bg-custom-green:hover {
+    background-color: #035d1a;
+  }
+
+  .focus\:bg-custom-green:focus {
+    background-color: #035d1a;
+  }
+}
