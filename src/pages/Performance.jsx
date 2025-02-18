@@ -42,17 +42,59 @@ const Performance = () => {
     localStorage.setItem("students", JSON.stringify(updatedStudents));
     setSelectedStudent(updatedStudent);
   };
-
-  // Handle file upload
+//this is file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (!file || !["application/pdf", "application/vnd.ms-excel"].includes(file.type)) return alert("Invalid file format!");
-    const updatedStudent = { ...selectedStudent, resultFile: file.name };
-    const updatedStudents = { ...students, [semester]: students[semester].map(s => s.id === selectedStudent.id ? updatedStudent : s) };
-    setStudents(updatedStudents);
-    localStorage.setItem("students", JSON.stringify(updatedStudents));
+    if (!file) return alert("No file selected!");
+  
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf", // PDF files
+      "application/vnd.ms-excel", // .xls files
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx files
+    ];
+  
+    if (!allowedTypes.includes(file.type)) {
+      return alert("Invalid file format! Please upload a PDF or Excel file.");
+    }
+  
+    // Validate file size (5MB limit)
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxFileSize) {
+      return alert("File size exceeds the maximum limit of 5MB.");
+    }
+  
+    // Read the file as a Base64 string
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target.result; // Base64 string
+  
+      // Update student data with the file name and content
+      const updatedStudent = {
+        ...selectedStudent,
+        resultFile: file.name,
+        resultFileContent: fileContent, // Store the file content
+      };
+  
+      const updatedStudents = {
+        ...students,
+        [semester]: students[semester].map((s) =>
+          s.id === selectedStudent.id ? updatedStudent : s
+        ),
+      };
+  
+      setStudents(updatedStudents);
+      localStorage.setItem("students", JSON.stringify(updatedStudents));
+      setSelectedStudent(updatedStudent);
+    };
+  
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+      alert("Failed to read the file. Please try again.");
+    };
+  
+    reader.readAsDataURL(file); // Read the file as a Base64 string
   };
-
   // Handle removing data
   const handleRemove = (type) => {
     const updatedStudent = { ...selectedStudent, [type]: null };
@@ -64,14 +106,13 @@ const Performance = () => {
 
   // Handle downloading results
   const handleDownloadResult = () => {
-    if (selectedStudent?.resultFile) {
+    if (selectedStudent?.resultFileContent) {
       const a = document.createElement("a");
-      a.href = `/path_to_your_storage/${selectedStudent.resultFile}`;
-      a.download = selectedStudent.resultFile;
+      a.href = selectedStudent.resultFileContent; // Base64 string
+      a.download = selectedStudent.resultFile; // File name
       a.click();
     }
   };
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -120,7 +161,7 @@ const Performance = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-teal-50 to-purple-50 pt-20 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-teal-100 to-purple-100 pt-20 p-6"> {/* Increased gradient stops */}
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

@@ -1,38 +1,6 @@
 import React from 'react';
-import jsPDF from 'jspdf';
 
 const Receipt = ({ formData, photoPreview }) => {
-  const saveReceiptAsPdf = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.text('Admission Receipt', 20, 20);
-    doc.setFontSize(16);
-
-    if (photoPreview) {
-      doc.addImage(photoPreview, 'JPEG', 150, 20, 40, 40); // Add photo preview
-    }
-
-    const receiptContent = `
-      Name: ${formData.name}
-      Email: ${formData.email}
-      Phone: ${formData.phone}
-      Address: ${formData.address}
-      Date of Birth: ${formData.dob}
-      Course: ${formData.course}
-      Semester: ${formData.semester}
-      Fee Type: ${formData.feeType}
-      Roll Number: ${formData.rollNumber}
-      Payment Method: ${formData.paymentMethod}
-      Fee Amount: ₹${getFeeAmount(formData)}
-      Status: ${formData.paymentMethod === "UPI" ? "Paid" : "Unpaid"}
-      ${formData.paymentMethod !== "UPI" ? "Please verify and submit your fee at the college clerk's office. Thank you." : ""}
-    `;
-    
-    doc.setFontSize(12);
-    doc.text(receiptContent, 20, 50);
-    doc.save('receipt.pdf');
-  };
-
   const openReceiptInNewPage = () => {
     const newWindow = window.open('', '_blank');
     const content = `
@@ -54,20 +22,20 @@ const Receipt = ({ formData, photoPreview }) => {
               <div class="float-right ml-4 md:ml-6 mb-4 md:mb-6">
                 <img src="${photoPreview}" alt="ID Preview" class="w-24 h-24 md:w-32 md:h-32 rounded-lg shadow-md"/>
               </div>
-            ` : ''}
+            ` : '<div class="float-right ml-4 md:ml-6 mb-4 md:mb-6"><p class="text-gray-500 italic">No ID Photo Uploaded</p></div>'}
             <div>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Name:</strong> ${formData.name}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Email:</strong> ${formData.email}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Phone:</strong> ${formData.phone}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Address:</strong> ${formData.address}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Date of Birth:</strong> ${formData.dob}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Course:</strong> ${formData.course}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Semester:</strong> ${formData.semester}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Fee Type:</strong> ${formData.feeType}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Roll Number:</strong> ${formData.rollNumber}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Payment Method:</strong> ${formData.paymentMethod}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Name:</strong> ${formData.name || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Email:</strong> ${formData.email || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Phone:</strong> ${formData.phone || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Address:</strong> ${formData.address || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Date of Birth:</strong> ${formData.dob || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Course:</strong> ${formData.course || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Semester:</strong> ${formData.semester || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Fee Type:</strong> ${formData.feeType || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Roll Number:</strong> ${formData.rollNumber || 'N/A'}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Payment Method:</strong> ${formData.paymentMethod || 'N/A'}</p>
               <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Fee Amount:</strong> ₹${getFeeAmount(formData)}</p>
-              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Status:</strong> ${formData.paymentMethod === "UPI" ? "Paid" : "Unpaid"}</p>
+              <p class="text-base md:text-lg"><strong class="inline-block w-28 md:w-36">Status:</strong> ${formData.paymentMethod === "UPI" ? "Paid" : "Verify your payment At college and stamp your {RECEIPT}"}</p>
             </div>
             <div class="clear-both"></div>
             <p class="text-red-600 font-bold text-center mt-5">
@@ -85,17 +53,18 @@ const Receipt = ({ formData, photoPreview }) => {
   };
 
   return (
-    <div>
-      <button onClick={saveReceiptAsPdf} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded shadow-lg hover:bg-blue-600 transition duration-300">
-        Save as PDF
-      </button>
-      <button onClick={openReceiptInNewPage} className="mt-4 ml-4 bg-green-500 text-white py-2 px-4 rounded shadow-lg hover:bg-green-600 transition duration-300">
-        Open in New Page
+    <div className="flex justify-center mt-6">
+      <button
+        onClick={openReceiptInNewPage}
+        className="bg-green-500 text-white py-2 px-4 rounded shadow-lg hover:bg-green-600 transition duration-300"
+      >
+        Print Payment Receipt
       </button>
     </div>
   );
 };
 
+// Fee calculation logic
 const getFeeAmount = (formData) => {
   if (formData.course === "BCA") {
     return formData.feeType === "Subsidized" ? 7000 : 14000;

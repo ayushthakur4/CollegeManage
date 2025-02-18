@@ -6,6 +6,7 @@ import { FaUser, FaDownload, FaSearch, FaCalendarAlt, FaCheckCircle, FaExclamati
 import * as XLSX from 'xlsx';
 import Loader from '../components/Loader';
 import EmptyState from '../components/EmptyState';
+import { motion } from 'framer-motion';
 
 Chart.register(...registerables);
 
@@ -52,9 +53,9 @@ const Student = () => {
     return { presentDays, absentDays, leaveDays, percentage: totalDays ? (presentDays / totalDays) * 100 : 0 };
   }, []);
 
-  const attendanceData = useMemo(() => 
+  const attendanceData = useMemo(() =>
     selectedStudent ? calculateAttendance(selectedStudent) : { presentDays: 0, absentDays: 0, leaveDays: 0, percentage: 0 },
-  [selectedStudent, calculateAttendance]);
+    [selectedStudent, calculateAttendance]);
 
   const handleDownloadAttendance = useCallback(() => {
     if (!selectedStudent) return;
@@ -65,27 +66,20 @@ const Student = () => {
     XLSX.writeFile(wb, `${selectedStudent.name}_Attendance.xlsx`);
   }, [selectedStudent]);
 
-  const handleDownloadResult = useCallback(async () => {
-    if (!selectedStudent?.resultFile) return;
-    setLoading(true);
-    try {
-      const a = document.createElement('a');
-      a.href = `/results/${selectedStudent.resultFile}`;
+  const handleDownloadResult = useCallback(() => {  // useCallback added here
+    if (selectedStudent?.resultFileContent) {
+      const a = document.createElement("a");
+      a.href = selectedStudent.resultFileContent;
       a.download = selectedStudent.resultFile;
       a.click();
-    } catch (error) {
-      console.error('Error downloading result:', error);
-      alert('Failed to download result.');
-    } finally {
-      setLoading(false);
     }
   }, [selectedStudent]);
 
   const getMarksColor = (marks, maxMarks) => {
     const percentage = (marks / maxMarks) * 100;
-    if (percentage >= 80) return 'bg-gradient-to-r from-green-400 to-green-600';
-    if (percentage >= 50) return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
-    return 'bg-gradient-to-r from-red-400 to-red-600';
+    if (percentage >= 80) return 'bg-green-500';
+    if (percentage >= 50) return 'bg-yellow-500';
+    return 'bg-red-500';
   };
 
   const barData = {
@@ -94,7 +88,7 @@ const Student = () => {
       {
         label: 'Attendance Status',
         data: [attendanceData.presentDays, attendanceData.absentDays, attendanceData.leaveDays],
-        backgroundColor: ['#4CAF50', '#F44336', '#FF9800'],
+        backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'],
       },
     ],
   };
@@ -104,170 +98,264 @@ const Student = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'bottom',
+        labels: {
+          color: '#6b7280'
+        }
       },
     },
+    scales: {
+      y: {
+        ticks: {
+          color: '#6b7280',
+          beginAtZero: true,
+          stepSize: 1,
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        }
+      },
+      x: {
+        ticks: {
+          color: '#6b7280'
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        }
+      }
+    }
   };
 
   const StudentCard = ({ student }) => {
     const { percentage, presentDays, absentDays, leaveDays } = calculateAttendance(student);
-    const attendanceColor = percentage >= 80 ? "bg-gradient-to-r from-green-400 to-green-600" : percentage >= 50 ? "bg-gradient-to-r from-yellow-400 to-yellow-600" : "bg-gradient-to-r from-red-400 to-red-600";
 
     return (
-      <div
-        className={`p-6 bg-white/80 backdrop-blur-md rounded-xl shadow-lg cursor-pointer transform transition-all hover:scale-105 hover:shadow-xl ${selectedStudent?.id === student.id ? "ring-4 ring-teal-400" : ""}`}
+      <motion.div
+        className="bg-white shadow-md rounded-2xl overflow-hidden transition-transform transform hover:scale-105 cursor-pointer"
         onClick={() => handleStudentSelect(student)}
+        whileHover={{ y: -5 }}
       >
-        <div className="flex items-center mb-4">
-          <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center mr-4">
-            <FaUser className="text-2xl text-teal-600" />
+        <div className="bg-gray-100 p-4">
+          <FaUser className="text-teal-500 text-5xl mx-auto block" />
+        </div>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold text-gray-800 truncate">{student.name}</h3>
+          <p className="text-gray-600 text-sm mb-2">#{student.rollNumber}</p>
+          <div className="flex justify-between text-xs text-gray-500">
+            <span><FaCheckCircle className="inline mr-1 text-green-500" /> {presentDays}</span>
+            <span><FaExclamationTriangle className="inline mr-1 text-red-500" /> {absentDays}</span>
+            <span><FaPauseCircle className="inline mr-1 text-yellow-500" /> {leaveDays}</span>
           </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-800">{student.name}</h3>
-            <p className="text-sm text-gray-600">#{student.rollNumber} • {semester}</p>
+          <div className="mt-2">
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <span>Attendance:</span>
+              <span className="font-semibold">{percentage.toFixed(1)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${percentage}%`,
+                  backgroundColor: percentage >= 80 ? '#22c55e' : percentage >= 50 ? '#f59e0b' : '#ef4444',
+                }}
+              />
+            </div>
           </div>
         </div>
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="flex items-center text-sm text-gray-600"><FaCalendarAlt className="mr-2" /> Attendance</span>
-            <span className="text-sm font-semibold">{percentage.toFixed(1)}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className={`${attendanceColor} rounded-full h-2`} style={{ width: `${percentage}%` }}></div>
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-2">
-            <span><FaCheckCircle className="inline mr-1 text-green-500" /> {presentDays} Present</span>
-            <span><FaExclamationTriangle className="inline mr-1 text-red-500" /> {absentDays} Absent</span>
-            <span><FaPauseCircle className="inline mr-1 text-yellow-500" /> {leaveDays} Leave</span>
-          </div>
-        </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
-    <>
+    <div className="bg-gray-50 min-h-screen font-sans">
       <Navbar />
-      <div className="pt-16 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">Student Portal</h2>
-
-        {/* Notifications */}
-        <div className="mb-6 flex justify-between items-center bg-yellow-100/80 backdrop-blur-md p-4 rounded-lg">
-          <div className="flex items-center">
-            <FaBell className="mr-2 text-yellow-600" />
-            <span className="text-yellow-600">{notifications.length} New Notifications</span>
-          </div>
-          <button onClick={() => setNotifications([])} className="text-yellow-600 hover:text-yellow-800">
-            Clear Notifications
-          </button>
-        </div>
-
-        <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-sm border border-gray-200 mb-8 flex gap-4">
-          <select value={semester} onChange={e => setSemester(e.target.value)} className="w-1/2 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white/80 backdrop-blur-md">
-            {[...Array(6)].map((_, i) => <option key={i} value={`Semester ${i + 1}`}>Semester {i + 1}</option>)}
-          </select>
-          <div className="relative w-1/2">
-            <FaSearch className="absolute left-3 top-3 text-gray-400" />
-            <input type="text" placeholder="Search by name or roll number..." className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white/80 backdrop-blur-md" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-          </div>
-        </div>
-
-        {!showDetails ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredStudents.map(student => (
-              <StudentCard key={student.id} student={student} />
+      <div className="container mx-auto px-4 py-12">
+        <motion.h1
+          className="text-3xl font-extrabold text-gray-900 text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Student Performance Dashboard
+        </motion.h1>
+        <motion.div
+          className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          <select
+            value={semester}
+            onChange={e => setSemester(e.target.value)}
+            className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          >
+            {[...Array(6)].map((_, i) => (
+              <option key={i} value={`Semester ${i + 1}`}>Semester {i + 1}</option>
             ))}
+          </select>
+          <div className="relative flex-grow">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <FaSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search by name or roll number..."
+              className="block w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
           </div>
+        </motion.div>
+        {!showDetails ? (
+          filteredStudents.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              {filteredStudents.map(student => (
+                <StudentCard key={student.id} student={student} />
+              ))}
+            </motion.div>
+          ) : (
+            <EmptyState message="No students found for this semester." />
+          )
         ) : (
-          <div className="mt-8 bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-sm border border-gray-200">
-            <button onClick={() => setShowDetails(false)} className="mb-4 flex items-center text-teal-600 hover:text-teal-800"><FaArrowLeft className="mr-2" /> Back to Students</button>
-            <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2"><FaUser className="text-teal-600" /> {selectedStudent.name}</h3>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="p-4 bg-teal-50 rounded-lg text-center">
-                <p className="text-2xl font-bold text-teal-600">{attendanceData.presentDays}</p>
-                <p className="text-sm text-teal-700">Present</p>
-              </div>
-              <div className="p-4 bg-red-50 rounded-lg text-center">
-                <p className="text-2xl font-bold text-red-600">{attendanceData.absentDays}</p>
-                <p className="text-sm text-red-700">Absent</p>
-              </div>
-              <div className="p-4 bg-amber-50 rounded-lg text-center">
-                <p className="text-2xl font-bold text-amber-600">{attendanceData.leaveDays}</p>
-                <p className="text-sm text-amber-700">Leave</p>
-              </div>
-            </div>
-
-            {/* Attendance History Bar Chart */}
-            <div className="w-full h-72 mb-6">
-              <Bar data={barData} options={barOptions} />
-            </div>
-
-            {/* Marks and Assignment Scores */}
-            <div className="mt-6">
-              <h4 className="text-lg font-semibold text-gray-800 mb-4">Academic Performance</h4>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-gray-700">Assignment Score (Out of 20)</label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">{selectedStudent.assignmentScore || 0}/20</span>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className={`${getMarksColor(selectedStudent.assignmentScore, 20)} h-2 rounded-full`} style={{ width: `${(selectedStudent.assignmentScore || 0) / 20 * 100}%` }} />
-                    </div>
-                  </div>
+          <motion.div
+            className="bg-white shadow-lg rounded-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <button
+              onClick={() => setShowDetails(false)}
+              className="flex items-center text-teal-600 hover:text-teal-800 transition-colors mb-4"
+            >
+              <FaArrowLeft className="mr-2" /> Back to Students
+            </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  <FaUser className="inline-block mr-2 text-teal-500" />{selectedStudent.name}
+                </h3>
+                <div className="bg-gray-50 rounded-md p-4">
+                  <p className="text-gray-600 text-sm">Roll Number: {selectedStudent.rollNumber}</p>
+                  <p className="text-gray-600 text-sm">Semester: {semester}</p>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-700">Exam Score (Out of 100)</label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">{selectedStudent.examScore || 0}/100</span>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className={`${getMarksColor(selectedStudent.examScore, 100)} h-2 rounded-full`} style={{ width: `${(selectedStudent.examScore || 0) / 100 * 100}%` }} />
+                <div className="mt-6">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">Attendance Summary</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">{attendanceData.presentDays}</div>
+                      <div className="text-sm text-gray-500">Present</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-red-600">{attendanceData.absentDays}</div>
+                      <div className="text-sm text-gray-500">Absent</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-yellow-600">{attendanceData.leaveDays}</div>
+                      <div className="text-sm text-gray-500">Leave</div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">Attendance Chart</h4>
+                <div className="relative h-64">
+                  <Bar data={barData} options={barOptions} />
+                </div>
+                <div className="mt-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">Academic Performance</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-700">Assignment Score (Out of 20)</span>
+                      <span className="font-semibold">{selectedStudent.assignmentScore || 0}/20</span>
+                    </div>
+                    <div className="bg-gray-200 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full"
+                        style={{
+                          width: `${(selectedStudent.assignmentScore / 20) * 100}%`,
+                          backgroundColor: getMarksColor(selectedStudent.assignmentScore, 20),
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-700">Exam Score (Out of 100)</span>
+                      <span className="font-semibold">{selectedStudent.examScore || 0}/100</span>
+                    </div>
+                    <div className="bg-gray-200 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full"
+                        style={{
+                          width: `${(selectedStudent.examScore / 100) * 100}%`,
+                          backgroundColor: getMarksColor(selectedStudent.examScore, 100),
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <button onClick={handleDownloadAttendance} className="mt-6 w-full px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-lg hover:from-teal-600 hover:to-teal-700 transition-colors flex items-center justify-center gap-2"><FaDownload /> Export Attendance</button>
-            {selectedStudent.resultFile && (
-              <button onClick={handleDownloadResult} disabled={loading} className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
-                {loading ? <Loader size="small" /> : <><FaDownload /> Download Report</>}
+            <div className="mt-8 flex justify-between">
+              <button
+                onClick={handleDownloadAttendance}
+                className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+              >
+                <FaDownload className="mr-2" /> Export Attendance
               </button>
-            )}
-          </div>
+              {selectedStudent.resultFileContent && ( // Check if result file content exists
+                <button
+                  onClick={handleDownloadResult}
+                  disabled={loading}
+                  className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? <Loader size="small" /> : <><FaDownload className="mr-2" /> Download Report</>}
+                </button>
+              )}
+            </div>
+          </motion.div>
         )}
-
         {/* Password Modal */}
         {showPasswordModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-white/90 backdrop-blur-md p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center">
+            <motion.div
+              className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+            >
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Enter Password</h3>
               <input
                 type="password"
-                placeholder="Enter password (Roll Number)"
-                className="w-full p-2 border rounded-lg mb-4 bg-white/80 backdrop-blur-md"
+                placeholder="Enter Roll Number"
+                className="w-full p-3 border rounded-md mb-3"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {passwordError && <p className="text-red-500 text-sm mb-4">{passwordError}</p>}
-              <div className="flex gap-2">
+              {passwordError && <p className="text-red-500 text-sm mb-3">{passwordError}</p>}
+              <div className="flex justify-end gap-2">
                 <button
                   onClick={handlePasswordSubmit}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-lg hover:from-teal-600 hover:to-teal-700"
+                  className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Submit
                 </button>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700"
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded"
                 >
                   Cancel
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

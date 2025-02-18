@@ -10,7 +10,6 @@ import {
   FaChartPie,
   FaSearch,
 } from 'react-icons/fa';
-import { Bar } from 'react-chartjs-2';
 
 const holidays = ['2024-12-25', '2024-12-31'];
 
@@ -307,7 +306,7 @@ const BCA = () => {
         </div>
 
 
-        {/* Attendance History Modal */}
+        {/* Attendance History */}
         {showAttendanceHistory && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-lg">

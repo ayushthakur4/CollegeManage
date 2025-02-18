@@ -1,371 +1,254 @@
 import React from "react";
-import { FaStar, FaRegStar, FaLaptop, FaUsers, FaChalkboardTeacher, FaTrophy, FaGraduationCap, FaMapMarkerAlt, FaPhone, FaEnvelope, FaTwitter, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaTwitter, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 
-// Motion variants for scroll animations
-const fadeIn = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
-};
-
-const scaleUp = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: "easeOut" } },
-};
-
-const slideInLeft = {
-  hidden: { opacity: 0, x: -50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 1 } },
-};
-
-const slideInRight = {
-  hidden: { opacity: 0, x: 50 },
-  visible: { opacity: 1, x: 0, transition: { duration: 1 } },
-};
-
-const rotateIn = {
-  hidden: { opacity: 0, rotate: -10 },
-  visible: { opacity: 1, rotate: 0, transition: { duration: 1, ease: "easeOut" } },
+// Motion Variants
+const slideUp = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 const WhatWeAre = () => {
-  const reviews = [
-    {
-      avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-      name: "Hardik Pandya",
-      role: "Alumni",
-      rating: 5,
-      text: "The advanced labs and faculty at GDC BARSAR transformed my career.",
-    },
-    {
-      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-      name: "Khushi Dutt",
-      role: "Current Student",
-      rating: 4,
-      text: "The seminars here are unparalleled, bringing top industry experts.",
-    },
-    {
-      avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-      name: "Aarav Singh",
-      role: "Alumni",
-      rating: 5,
-      text: "The mentorship helped me secure a top-tier job in the tech industry.",
-    },
-  ];
-
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-indigo-50 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply opacity-50 animate-blob"></div>
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply opacity-50 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply opacity-30 animate-blob animation-delay-4000"></div>
-      </div>
-
-      {/* Mission & Vision Section with Scrolling Animation */}
-      <motion.section
-        className="relative py-24"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeIn}
-      >
-        <div className="container mx-auto px-6 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div className="space-y-8 relative">
-              <div className="absolute -left-8 top-0 w-1 h-full bg-gradient-to-b from-indigo-400 to-teal-400 rounded-full"></div>
-              <motion.h2
-                className="text-4xl font-bold text-gray-800 leading-tight"
-                initial="hidden"
-                whileInView="visible"
-                variants={slideInLeft}
-              >
-                Shaping Futures Through
-                <span className="bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent">
-                  {" "}Innovative Education
-                </span>
-              </motion.h2>
-              <div className="space-y-6">
-                <div className="pl-8 border-l-4 border-indigo-200">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-3">Our Mission</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed">
-                    To empower students with knowledge, skills, and values that prepare them to excel in their chosen fields and contribute meaningfully to society.
-                  </p>
-                </div>
-                <div className="pl-8 border-l-4 border-teal-200">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-3">Our Vision</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed">
-                    To become a global leader in education by fostering innovation, creativity, and excellence in all aspects of learning.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <motion.div
-                className="relative w-full h-96 rounded-3xl overflow-hidden shadow-2xl"
-                initial="hidden"
-                whileInView="visible"
-                variants={rotateIn}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-teal-500"></div>
-                <div className="absolute inset-6 border-2 border-white/30 rounded-2xl flex items-center justify-center">
-                  <span className="text-3xl font-bold text-white text-center px-8">
-                    "Education is the most powerful weapon which you can use to change the world"
-                  </span>
-                </div>
-              </motion.div>
-            </div>
-          </div>
+    <div className="font-sans bg-gray-50 text-gray-900 overflow-hidden">
+      {/* Stats Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {[
+            { number: "50+", label: "Academic Programs" },
+            { number: "15k+", label: "Alumni Network" },
+            { number: "200+", label: "Faculty Members" },
+            { number: "75+", label: "Acres Campus" },
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              initial="hidden"
+              whileInView="visible"
+              variants={slideUp}
+              viewport={{ once: true }}
+              className="text-center p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl"
+            >
+              <div className="text-4xl font-bold text-blue-900 mb-2">{stat.number}</div>
+              <div className="text-gray-600">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
-      </motion.section>
+      </section>
 
-      {/* Features Section with Animation */}
-      <motion.section
-        className="relative py-24 bg-white/50 backdrop-blur-lg"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={scaleUp}
-      >
-        <div className="container mx-auto px-6 lg:px-20">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Why Choose
-            <span className="bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent"> GDC BARSAR</span>
-          </h2>
+      {/* Academic Excellence Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            variants={slideUp}
+            className="text-4xl font-bold text-center mb-16 text-blue-900"
+          >
+            Pillars of Excellence
+          </motion.h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[ 
-              { icon: FaLaptop, title: "Advanced Labs", text: "State-of-the-art facilities with hands-on experience in real-world scenarios." },
-              { icon: FaUsers, title: "Expert Seminars", text: "Industry-led workshops bringing the latest tech trends to our students." },
-              { icon: FaChalkboardTeacher, title: "Distinguished Faculty", text: "Experienced mentors guiding your academic and professional journey." },
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                className="group relative bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300"
-                initial="hidden"
-                whileInView="visible"
-                variants={slideInLeft}
-              >
-                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-indigo-100 transition-colors duration-300"></div>
-                <feature.icon className="w-16 h-16 p-4 mb-6 text-indigo-600 bg-indigo-50 rounded-2xl" />
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Achievements Section with Animation */}
-      <motion.section
-        className="relative py-24 bg-gradient-to-br from-indigo-50 to-teal-50"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeIn}
-      >
-        <div className="container mx-auto px-6 lg:px-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[ 
-              { icon: FaTrophy, title: "Ranked #1", subtitle: "Best Computer Science College in the Region" },
-              { icon: FaGraduationCap, title: "5000+ Alumni", subtitle: "Successful graduates worldwide" },
-              { icon: FaUsers, title: "100+ Partners", subtitle: "Industry collaborations and placements" },
-            ].map((achievement, idx) => (
-              <motion.div
-                key={idx}
-                className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-                initial="hidden"
-                whileInView="visible"
-                variants={scaleUp}
-              >
-                <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-indigo-600 text-white rounded-2xl">
-                  <achievement.icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-3xl font-bold text-gray-800 mb-2">{achievement.title}</h3>
-                <p className="text-gray-600">{achievement.subtitle}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Testimonials Section with Animation */}
-      <motion.section
-        className="relative py-24"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeIn}
-      >
-        <div className="container mx-auto px-6 lg:px-20">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Voices of
-            <span className="bg-gradient-to-r from-indigo-600 to-teal-600 bg-clip-text text-transparent"> Success</span>
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {reviews.map((review, index) => (
+            {[
+              { title: "Innovative Learning", content: "State-of-the-art classrooms with interactive learning technologies", icon: "💡" },
+              { title: "Research Focus", content: "50+ research centers with ₹20Cr+ annual funding", icon: "🔬" },
+              { title: "Global Exposure", content: "150+ international collaborations and exchange programs", icon: "🌍" },
+            ].map((pillar, index) => (
               <motion.div
                 key={index}
-                className="relative group bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
                 initial="hidden"
                 whileInView="visible"
-                variants={slideInRight}
+                variants={slideUp}
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all group"
               >
-                <div className="absolute top-0 right-0 p-4 text-indigo-600 opacity-20 group-hover:opacity-100 transition-opacity">
-                  <FaStar className="w-8 h-8" />
+                <div className="text-6xl mb-6 opacity-80 group-hover:opacity-100 transition-all">
+                  {pillar.icon}
                 </div>
-                <div className="flex items-center mb-6">
-                  <img src={review.avatar} alt={review.name} className="w-14 h-14 rounded-full object-cover shadow-md" />
-                  <div className="ml-4">
-                    <h3 className="text-lg font-bold text-gray-800">{review.name}</h3>
-                    <p className="text-sm text-gray-600">{review.role}</p>
-                  </div>
-                </div>
-                <div className="mb-4 flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="mr-1">
-                      {i < review.rating ? (
-                        <FaStar className="w-5 h-5 text-yellow-400" />
-                      ) : (
-                        <FaRegStar className="w-5 h-5 text-gray-300" />
-                      )}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-gray-600 italic">"{review.text}"</p>
+                <h3 className="text-2xl font-bold mb-4 text-blue-900">{pillar.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{pillar.content}</p>
               </motion.div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* CTA Section */}
-      <motion.section
-        className="relative py-24 bg-gradient-to-br from-indigo-600 to-teal-600"
-        initial="hidden"
-        whileInView="visible"
-        variants={fadeIn}
-      >
-        <div className="container mx-auto px-6 lg:px-20 text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-white mb-8">
-              Ready to Begin Your
-              <span className="block bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">Success Story?</span>
-            </h2>
-            <p className="text-lg text-indigo-100 mb-12">
-              Take the first step towards a brighter future with GDC BARSAR. Enroll now and join a community of innovators and leaders.
-            </p>
-            <Link
-              to="/enroll"
-              className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 rounded-full font-bold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl"
+      {/* Campus Life Section */}
+      <section className="py-20 bg-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              variants={slideUp}
+              className="relative rounded-3xl overflow-hidden shadow-2xl"
             >
-              Start Your Journey
-              <svg className="w-5 h-5 ml-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </motion.section>
-    
-      {/* Contact Section */}
-      <motion.section
-        className="relative py-24 bg-white"
-        initial="hidden"
-        whileInView="visible"
-        variants={fadeIn}
-      >
-        <div className="container mx-auto px-6 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <h2 className="text-4xl font-bold text-blue-900">Contact Us</h2>
-              <p className="text-gray-600">
-                Have questions? Our team is here to help guide your academic journey.
+              <img
+                src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                alt="Campus Life"
+                className="w-full h-[500px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent"></div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              variants={slideUp}
+              className="space-y-6"
+            >
+              <h2 className="text-4xl font-bold text-blue-900">Vibrant Campus Life</h2>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Experience holistic development through 50+ student clubs, national-level sports facilities,
+                and cultural festivals that celebrate diversity and creativity.
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <FaMapMarkerAlt className="text-blue-900 text-xl" />
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: "Student Clubs", value: "50+" },
+                  { label: "Sports Facilities", value: "15+" },
+                  { label: "Cultural Events", value: "100+" },
+                  { label: "Labs & Workshops", value: "40+" },
+                ].map((item, index) => (
+                  <div key={index} className="bg-white p-4 rounded-xl shadow-md">
+                    <div className="text-2xl font-bold text-blue-900">{item.value}</div>
+                    <div className="text-gray-600">{item.label}</div>
                   </div>
-                  <div>
-                    <div className="font-semibold">Main Campus</div>
-                    <div className="text-gray-600">Summer Hill, Shimla - 171005</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <FaPhone className="text-blue-900 text-xl" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">Admission Helpline</div>
-                    <div className="text-gray-600">+91 177 283 3555</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <FaEnvelope className="text-blue-900 text-xl" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">Email</div>
-                    <div className="text-gray-600">admissions@hpuniv.ac.in</div>
-                  </div>
-                </div>
+                ))}
               </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
-              <div className="pt-8">
-                <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
-                <div className="flex gap-4">
-                  {[FaTwitter, FaFacebookF, FaInstagram, FaYoutube].map((Icon, index) => (
-                    <motion.a
-                      key={index}
-                      whileHover={{ y: -5 }}
-                      className="text-blue-400 text-2xl hover:opacity-80"
-                      href="#"
-                    >
-                      <Icon className="w-8 h-8" />
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
+      {/* Admissions CTA */}
+      <section className="py-20 bg-gradient-to-r from-blue-900 to-purple-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={slideUp}
+            className="space-y-8 max-w-4xl mx-auto"
+          >
+            <h2 className="text-4xl font-bold">Meet the Team Behind the Code</h2>
+            <p className="text-xl text-blue-200">
+            Curious About the Minds Behind This? Get to Know Us!
+            </p>
+            <div className="flex justify-center gap-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold flex items-center gap-2 shadow-xl hover:shadow-2xl transition-all"
+              >
+                <Link to="/learn">Meet The Team</Link> {/* Use Link for routing */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                </svg>
+              </motion.div>
             </div>
+          </motion.div>
+        </div>
+      </section>
 
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <form className="space-y-6">
-                <div>
-                  <label className="block text-gray-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+      {/* Contact Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl shadow-xl p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <h2 className="text-4xl font-bold text-blue-900">Contact Us</h2>
+                <p className="text-gray-600">
+                  Have questions? Our team is here to help guide your academic journey.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <FaMapMarkerAlt className="text-blue-900 text-xl" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">Main Campus</div>
+                      <div className="text-gray-600">Summer Hill, Shimla - 171005</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <FaPhone className="text-blue-900 text-xl" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">Admission Helpline</div>
+                      <div className="text-gray-600">+91 177 283 3555</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <FaEnvelope className="text-blue-900 text-xl" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">Email</div>
+                      <div className="text-gray-600">admissions@hpuniv.ac.in</div>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+
+                <div className="pt-8">
+                  <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+                  <div className="flex gap-4">
+                    {[
+                      { icon: FaTwitter, color: "text-blue-400" },
+                      { icon: FaFacebookF, color: "text-blue-600" },
+                      { icon: FaInstagram, color: "text-pink-500" },
+                      { icon: FaYoutube, color: "text-red-600" },
+                    ].map((SocialIcon, index) => (
+                      <motion.a
+                        key={index}
+                        whileHover={{ y: -5 }}
+                        className={`${SocialIcon.color} text-2xl hover:opacity-80`}
+                        href="#"
+                      >
+                        <SocialIcon.icon />
+                      </motion.a>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Message</label>
-                  <textarea
-                    rows="4"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  ></textarea>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-blue-900 text-white py-4 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
-                >
-                  Send Message
-                </motion.button>
-              </form>
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-lg">
+                <form className="space-y-6">
+                  <div>
+                    <label className="block text-gray-700 mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Message</label>
+                    <textarea
+                      rows="4"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-blue-900 text-white py-4 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+                  >
+                    Send Message
+                  </motion.button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 };

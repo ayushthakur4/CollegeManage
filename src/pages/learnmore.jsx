@@ -1,309 +1,235 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link for routing
 import { motion } from "framer-motion";
-import Navbar from "../components/Navbar"; // Make sure Navbar is in the correct path
-import dance from "../assets/hp21.jpg";
-import { FaTwitter, FaFacebookF, FaInstagram, FaYoutube, FaMapMarkerAlt, FaPhone, FaEnvelope } from "react-icons/fa";
 
+import NavBar from "../components/Navbar";
+import AyushThakurImage from "../assets/ayushthakur.jpg";
+import UjjwalBhardwajImage from "../assets/ujjuwalbhardwaj.jpg";
+import AnchalKumariImage from "../assets/anchalkumari.jpg";
+
+// Import icons (you can use any icon library like react-icons or custom SVGs)
+import { FaUserGraduate, FaBell, FaChartLine, FaClipboardCheck, FaBook, FaUsers } from "react-icons/fa";
 
 const LearnMore = () => {
-  const fadeIn = {
+  // Animation variants for Framer Motion
+  const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.8 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+  };
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
   };
 
-  const slideUp = {
-    hidden: { y: 50, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
+  // Function to highlight the first word
+  const highlightFirstWord = (text, color) => {
+    const words = text.split(" ");
+    return (
+      <p className="text-gray-600 mb-4">
+        <span style={{ color, fontSize: "1.25rem", fontWeight: "bold" }}>{words[0]}</span> {words.slice(1).join(" ")}
+      </p>
+    );
   };
+
+  // Key Features Data
+  const features = [
+    {
+      icon: <FaUserGraduate className="w-12 h-12 text-blue-600" />,
+      title: "Online Admission",
+      description: "Streamline the admission process with an easy-to-use online platform for students to apply and track their application status.",
+    },
+    {
+      icon: <FaBell className="w-12 h-12 text-purple-600" />,
+      title: "Notice Board",
+      description: "Stay updated with important announcements, events, and deadlines through a centralized notice board.",
+    },
+    {
+      icon: <FaChartLine className="w-12 h-12 text-green-600" />,
+      title: "Result & Performance Tracking",
+      description: "Students can view their results and track their academic performance over time with detailed analytics.",
+    },
+    {
+      icon: <FaClipboardCheck className="w-12 h-12 text-yellow-600" />,
+      title: "Attendance Management",
+      description: "Teachers can easily manage and record attendance, while students can monitor their attendance records.",
+    },
+    {
+      icon: <FaBook className="w-12 h-12 text-indigo-600" />,
+      title: "Course & Syllabus Access",
+      description: "Access course materials, syllabus, and academic resources all in one place for seamless learning.",
+    },
+    {
+      icon: <FaUsers className="w-12 h-12 text-pink-600" />,
+      title: "User-Friendly Interface",
+      description: "Designed with simplicity in mind, the platform ensures a smooth experience for both students and teachers.",
+    },
+  ];
 
   return (
-    <div className="learn-more-page bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 font-sans overflow-hidden"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Navbar */}
-      <Navbar />
+      <NavBar />
 
-      {/* Hero Section */}
-      <section className="hero relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-950/80 to-purple-900/80">
-          <img 
-            src={dance}
-            alt="Campus" 
-            className="w-full h-full object-cover mix-blend-overlay"
-          />
-        </div>
-        
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-          className="relative z-10 text-center px-4"
-        >
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Shaping Minds, <br/>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-purple-300">
-              Building Futures
-            </span>
-          </h1>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8">
-            NAAC 'A' Grade Accredited University Offering Transformative Education Since 1970
-          </p>
-          <div className="flex justify-center gap-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold flex items-center gap-2 shadow-xl hover:shadow-2xl transition-all"
-            >
-              <Link to="https://youtu.be/J7uIzKmMogw?si=5dIkLk95gNmJxbvH" target="_blank">
-                Explore Campus
-              </Link> {/* Using Link for YouTube redirect */}
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-blue-50/50"></div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[ 
-            { number: "50+", label: "Academic Programs" },
-            { number: "15k+", label: "Alumni Network" },
-            { number: "200+", label: "Faculty Members" },
-            { number: "75+", label: "Acres Campus" }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial="hidden"
-              whileInView="visible"
-              variants={slideUp}
-              viewport={{ once: true }}
-              className="text-center p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl"
-            >
-              <div className="text-4xl font-bold text-blue-900 mb-2">{stat.number}</div>
-              <div className="text-gray-600">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Academic Excellence Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <motion.h2 
-            initial="hidden"
-            whileInView="visible"
-            variants={slideUp}
-            className="text-4xl font-bold text-center mb-16 text-blue-900"
+      {/* Header Section */}
+      <motion.header
+        className="text-center py-32 relative overflow-hidden bg-cover bg-center"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1496469888073-80de7e952517?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+        }}
+        variants={itemVariants}
+      >
+        <div className="absolute inset-0 bg-black/30 z-0"></div> {/* Overlay for better text visibility */}
+        <div className="relative z-10">
+          <motion.h1
+            className="text-6xl sm:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 mb-6"
+            whileHover={{ scale: 1.05 }}
           >
-            Pillars of Excellence
-          </motion.h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[ 
-              { title: "Innovative Learning", content: "State-of-the-art classrooms with interactive learning technologies", icon: "💡" },
-              { title: "Research Focus", content: "50+ research centers with ₹20Cr+ annual funding", icon: "🔬" },
-              { title: "Global Exposure", content: "150+ international collaborations and exchange programs", icon: "🌍" }
-            ].map((pillar, index) => (
-              <motion.div
-                key={index}
-                initial="hidden"
-                whileInView="visible"
-                variants={slideUp}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all group"
-              >
-                <div className="text-6xl mb-6 opacity-80 group-hover:opacity-100 transition-all">
-                  {pillar.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-blue-900">{pillar.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{pillar.content}</p>
-              </motion.div>
-            ))}
-          </div>
+            College Student Management System
+          </motion.h1>
+          <motion.p
+            className=" font-bold text-xl sm:text-2xl text-gray-100 max-w-3xl mx-auto "
+            whileHover={{ scale: 1.02 }}
+          >
+            Revolutionizing academic and administrative processes with a seamless, intuitive platform for students and teachers.
+          </motion.p>
         </div>
-      </section>
+      </motion.header>
 
-      {/* Campus Life Section */}
-      <section className="py-20 bg-blue-50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              variants={slideUp}
-              className="relative rounded-3xl overflow-hidden shadow-2xl"
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                alt="Campus Life"
-                className="w-full h-[500px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent"></div>
-            </motion.div>
+      {/* Project Details Section */}
+      <motion.section
+        className="max-w-7xl mx-auto bg-white/50 backdrop-blur-lg p-12 rounded-[40px] shadow-2xl mb-20 relative overflow-hidden"
+        variants={itemVariants}
+      >
+        <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">About the Project</h2>
+        <p className="text-gray-700 leading-relaxed mb-4">
+          The College Student Management System is a cutting-edge platform designed to simplify and enhance the academic and administrative experience for both students and teachers. It provides a centralized hub for managing admissions, attendance, results, and academic resources.
+        </p>
+        <p className="text-gray-700 leading-relaxed mb-4">
+          Students can easily apply for admissions, view notices, check their results, and track their academic progress. Teachers, on the other hand, can manage attendance, upload notices, and evaluate student performance with just a few clicks.
+        </p>
+        <p className="text-gray-700 leading-relaxed">
+          The system is built with a user-friendly interface, ensuring that even non-tech-savvy users can navigate it effortlessly. It also includes features like course details, syllabus access, and performance analytics to provide a comprehensive academic experience.
+        </p>
+      </motion.section>
 
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              variants={slideUp}
-              className="space-y-6"
-            >
-              <h2 className="text-4xl font-bold text-blue-900">Vibrant Campus Life</h2>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Experience holistic development through 50+ student clubs, national-level sports facilities, 
-                and cultural festivals that celebrate diversity and creativity.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                {[ 
-                  { label: "Student Clubs", value: "50+" },
-                  { label: "Sports Facilities", value: "15+" },
-                  { label: "Cultural Events", value: "100+" },
-                  { label: "Labs & Workshops", value: "40+" }
-                ].map((item, index) => (
-                  <div key={index} className="bg-white p-4 rounded-xl shadow-md">
-                    <div className="text-2xl font-bold text-blue-900">{item.value}</div>
-                    <div className="text-gray-600">{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Admissions CTA */}
-      <section className="py-20 bg-gradient-to-r from-blue-900 to-purple-900 text-white">
-        <div className="container mx-auto px-4 text-center">
+      {/* Team Details Section */}
+      <motion.section
+        className="max-w-7xl mx-auto mb-20"
+        variants={itemVariants}
+      >
+        <h2 className="text-4xl font-bold text-gray-800 mb-10 text-center">Meet the Team</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {/* Ayush Thakur */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            variants={slideUp}
-            className="space-y-8 max-w-4xl mx-auto"
+            className="bg-white/50 backdrop-blur-lg p-8 rounded-[30px] shadow-lg text-center hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
           >
-            <h2 className="text-4xl font-bold">Ready to Begin Your Journey?</h2>
-            <p className="text-xl text-blue-200">
-              Applications for 2024 Admissions Now Open
-            </p>
-            <div className="flex justify-center gap-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold flex items-center gap-2 shadow-xl hover:shadow-2xl transition-all"
-              >
-                <Link to="/enroll">Apply Now</Link> {/* Use Link for routing */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
-                </svg>
-              </motion.div>
+            <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-blue-200">
+              <img src={AyushThakurImage} alt="Ayush Thakur" className="w-full h-full object-cover" />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-800 mb-4">Ayush Thakur</h3>
+            {highlightFirstWord(
+              "Developer and designer of this project. Responsible for coding, designing, and bringing the idea to life.",
+              "red"
+            )}
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-gray-700">Class Roll No: 22BC005</p>
+              <p className="text-gray-700">University Roll No: 62209007</p>
+            </div>
+          </motion.div>
+
+          {/* Ujjwal Bhardwaj */}
+          <motion.div
+            className="bg-white/50 backdrop-blur-lg p-8 rounded-[30px] shadow-lg text-center hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-purple-200">
+              <img src={UjjwalBhardwajImage} alt="Ujjwal Bhardwaj" className="w-full h-full object-cover" />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-800 mb-4">Ujjwal Bhardwaj</h3>
+            {highlightFirstWord(
+              "Ensured user-friendliness and bug-free functionality. Played a crucial role in documentation and testing.",
+              "green"
+            )}
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-gray-700">Class Roll No: 22BC003</p>
+              <p className="text-gray-700">University Roll No: 6220090037</p>
+            </div>
+          </motion.div>
+
+          {/* Anchal Kumari */}
+          <motion.div
+            className="bg-white/50 backdrop-blur-lg p-8 rounded-[30px] shadow-lg text-center hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-indigo-200">
+              <img src={AnchalKumariImage} alt="Anchal Kumari" className="w-full h-full object-cover" />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-800 mb-4">Anchal Kumari</h3>
+            {highlightFirstWord(
+              "Contributed valuable insights during brainstorming and supported the team with organizational skills.",
+              "orange"
+            )}
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p className="text-gray-700">Class Roll No: 22BC005</p>
+              <p className="text-gray-700">University Roll No: 6220090001</p>
             </div>
           </motion.div>
         </div>
-      </section>
 
-      {/* Contact Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl shadow-xl p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <h2 className="text-4xl font-bold text-blue-900">Contact Us</h2>
-                <p className="text-gray-600">
-                  Have questions? Our team is here to help guide your academic journey.
-                </p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <FaMapMarkerAlt className="text-blue-900 text-xl" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">Main Campus</div>
-                      <div className="text-gray-600">Summer Hill, Shimla - 171005</div>
-                    </div>
-                  </div>
+        {/* Guidance Card */}
+        <motion.div
+          className="max-w-7xl mx-auto bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-lg shadow-md mt-10 text-center"
+          variants={itemVariants}
+        >
+          <p className="text-xl text-gray-800 font-semibold">
+            This project is made under the guidance of{" "}
+            <span className="text-blue-700 font-bold">Prof. Jyoti Modgil</span>, Professor of BCA 6th, our project in-charge.
+          </p>
+        </motion.div>
+      </motion.section>
 
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <FaPhone className="text-blue-900 text-xl" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">Admission Helpline</div>
-                      <div className="text-gray-600">+91 177 283 3555</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <FaEnvelope className="text-blue-900 text-xl" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">Email</div>
-                      <div className="text-gray-600">admissions@hpuniv.ac.in</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-8">
-                  <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
-                  <div className="flex gap-4">
-                    {[
-                      { icon: FaTwitter, color: "text-blue-400" },
-                      { icon: FaFacebookF, color: "text-blue-600" },
-                      { icon: FaInstagram, color: "text-pink-500" },
-                      { icon: FaYoutube, color: "text-red-600" }
-                    ].map((SocialIcon, index) => (
-                      <motion.a
-                        key={index}
-                        whileHover={{ y: -5 }}
-                        className={`${SocialIcon.color} text-2xl hover:opacity-80`}
-                        href="#"
-                      >
-                        <SocialIcon.icon />
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
+      {/* Key Features Section */}
+      <motion.section
+        className="max-w-7xl mx-auto bg-white/50 backdrop-blur-lg p-12 rounded-[40px] shadow-2xl mb-20 relative overflow-hidden"
+        variants={itemVariants}
+      >
+        <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+        <h2 className="text-4xl font-bold text-gray-800 mb-8 text-center">Key Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              className="bg-white/70 backdrop-blur-lg p-8 rounded-[20px] shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="absolute inset-0 bg-opacity-10 bg-gradient-to-br from-blue-200 to-purple-200 blur-3xl -z-10"></div>
+              <div className="text-center">
+                <div className="flex justify-center mb-6">{feature.icon}</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-lg">
-                <form className="space-y-6">
-                  <div>
-                    <label className="block text-gray-700 mb-2">Full Name</label>
-                    <input 
-                      type="text" 
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">Email</label>
-                    <input 
-                      type="email" 
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">Message</label>
-                    <textarea 
-                      rows="4"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    ></textarea>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-blue-900 text-white py-4 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
-                  >
-                    Send Message
-                  </motion.button>
-                </form>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
-      </section>
-    </div>
+      </motion.section>
+
+      {/* Footer Section */}
+      <motion.footer
+        className="text-center text-gray-600 py-10"
+        variants={itemVariants}
+      >
+        <p>Thank you for visiting our project page! We hope you find our College Student Management System useful and innovative.</p>
+      </motion.footer>
+    </motion.div>
   );
 };
 
