@@ -26,4 +26,4 @@ Ayush Thakur: BCA 6th semester, Roll No: 22BC005, University Roll No: 6220090007
 
 Ujjuwal Bhardwaj: BCA 6th semester, Roll No: 22BC003
 
-Together, we are committed to delivering a user-friendly and efficient website that meets the needs of our college community.
+Together, we are committed to delivering a user-friendly and efficient website that meets the needs of our college community.# Student-management
