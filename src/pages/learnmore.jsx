@@ -36,7 +36,7 @@ const LearnMore = () => {
     { icon: <FaLaptopCode className="w-6 h-6" />, name: "React JS", category: "Frontend" },
     { icon: <FaServer className="w-6 h-6" />, name: "Node.js", category: "Backend" },
     { icon: <BsGearFill className="w-6 h-6" />, name: "Tailwind CSS", category: "style" },
-    { icon: <BsLightningFill className="w-6 h-6" />, name: "Netlify", category: "Database" },
+    { icon: <BsLightningFill className="w-6 h-6" />, name: "Vercel", category: "Database" },
   ];
 
   const features = [
