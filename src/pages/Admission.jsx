@@ -1,524 +1,499 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Receipt from "../components/Receipt";
+import { FaSearch, FaUser, FaUpload, FaDownload } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { FaInfoCircle, FaCheckCircle, FaTimesCircle, FaCreditCard, FaUniversity, FaFileImage } from "react-icons/fa"; // Import icons
-import DatePicker from "react-datepicker";  
-import "react-datepicker/dist/react-datepicker.css";
+import Receipt from "../components/Receipt";
 
-const Admission = () => {
+const AdmissionForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     address: "",
-    dob: null,  
-    course: "",
-    semester: "",
-    feeType: "",
+    dob: "",
+    course: "BCA",
+    studentType: "new",
+    feeType: "subsidized",
     rollNumber: "",
-    idPhoto: null,
-    paymentMethod: "",
-    agree: false,
+    semester: "Semester 1",
+    image: null,
+    paymentMethod: "at-college",
   });
-  const [upiUnavailable, setUpiUnavailable] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const [students, setStudents] = useState(() => {
+    const savedStudents = localStorage.getItem("students");
+    return savedStudents ? JSON.parse(savedStudents) : {};
+  });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  const [errors, setErrors] = useState({});
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [errors, setErrors] = useState({}); // State for validation errors
+  const [step, setStep] = useState(1);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const courses = ["BCA", "MCA", "MSC", "BSC"];
+  const semesters = ["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6"];
+  const studentTypes = ["New Student", "Existing Student"];
+  const feeTypes = ["Subsidized", "Non-Subsidized"];
+  const paymentMethods = ["UPI", "At College", "Card"];
+
+  const feeStructure = {
+    BCA: { subsidized: 7650, nonSubsidized: 16780 },
+    MCA: { subsidized: 12000, nonSubsidized: 25000 },
+    MSC: { subsidized: 10000, nonSubsidized: 20000 },
+    BSC: { subsidized: 8000, nonSubsidized: 18000 },
+  };
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case "email":
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Invalid email address";
+      case "phone":
+        return /^\d{10}$/.test(value) ? "" : "Phone number must be 10 digits";
+      case "rollNumber":
+        return value.trim() !== "" ? "" : "Roll number is required";
+      case "dob":
+        return value.trim() !== "" ? "" : "Date of birth is required";
+      case "address":
+        return value.trim() !== "" ? "" : "Address is required";
+      default:
+        return "";
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    let newErrors = { ...errors }; // Copy existing errors
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: validateField(name, value) });
 
-    if (name === "name" && !/^[a-zA-Z\s]+$/.test(value)) {
-      newErrors.name = "Name should only contain letters and spaces.";
-    } else {
-      delete newErrors.name; // Clear error if valid
-    }
-
-    if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      newErrors.email = "Invalid email format.";
-    } else {
-      delete newErrors.email;
-    }
-    if (name === "phone" && !/^[0-9]+$/.test(value)) {
-      newErrors.phone = "Invalid phone number format.";
-    } else {
-      delete newErrors.phone;
-    }
-
-    if (type === "file" && files.length > 0) {
-      const file = files[0];
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
-      if (!validTypes.includes(file.type)) {
-        alert("Please upload an image file (JPEG, PNG, GIF).");
-        return;
-      }
-      setPhotoPreview(URL.createObjectURL(file));
-    }
-
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
-    });
-    setErrors(newErrors); // Update error state
-    if (name === "paymentMethod") {
-      if (value === "UPI") {
-        setUpiUnavailable(true);
-      } else {
-        setUpiUnavailable(false);
-      }
+    if (name === "studentType") {
+      setShowSearchBar(value === "existing");
     }
   };
 
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, dob: date });
+  const handleSearch = () => {
+    const student = Object.values(students)
+      .flat()
+      .find((student) => student.rollNumber === searchQuery);
+
+    if (student) {
+      setFormData({
+        ...formData,
+        name: student.name,
+        rollNumber: student.rollNumber,
+        semester: student.semester,
+        studentType: "existing",
+      });
+      setErrors({});
+    } else {
+      setErrors({ rollNumber: "No student found with this roll number" });
+    }
   };
 
-  const validateForm = () => {
-    let newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required.";
-    if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.phone) newErrors.phone = "Phone is required.";
-    if (!formData.address) newErrors.address = "Address is required.";
-    if (!formData.dob) newErrors.dob = "Date of Birth is required.";
-    if (!formData.course) newErrors.course = "Course is required.";
-    if (!formData.semester) newErrors.semester = "Semester is required.";
-    if (!formData.feeType) newErrors.feeType = "Fee Type is required.";
-    if (!formData.paymentMethod) newErrors.paymentMethod = "Payment Method is required.";
-    if (!formData.rollNumber) newErrors.rollNumber = "Roll Number is required.";
-    if (!formData.idPhoto) newErrors.idPhoto = "ID Photo is required.";
-    if (!formData.agree) newErrors.agree = "You must agree to the terms and conditions.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Returns true if no errors
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, image: reader.result });
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return; // Stop submission if there are errors
-    }
-
-    console.log("Form Submitted", formData);
-    alert("Form Submitted Successfully!");
-    setShowReceipt(true);
-    setFormSubmitted(true);
+    setIsSubmitted(true);
+    alert("Admission Form Submitted Successfully!");
+    console.log("Form Data:", formData);
   };
 
-  const getSemesterOptions = () => {
-    let options = [];
-    if (formData.course === "BCA" || formData.course === "BSc" || formData.course === "BA") {
-      options = Array.from({ length: 6 }, (_, i) => (
-        <option key={i + 1} value={i + 1}>
-          Semester {i + 1}
-        </option>
-      ));
-    } else if (formData.course === "MCA" || formData.course === "MSc" || formData.course === "MA" || formData.course === "PGDCA") {
-      options = Array.from({ length: 4 }, (_, i) => (
-        <option key={i + 1} value={i + 1}>
-          Semester {i + 1}
-        </option>
-      ));
-    } else {
-      return <option disabled>Select course first</option>;
-    }
-    return options;
+  const calculateFee = () => {
+    const course = formData.course;
+    const feeType = formData.feeType === "subsidized" ? "subsidized" : "nonSubsidized";
+    return feeStructure[course][feeType];
   };
 
-  const getFeeAmount = () => {
-    let amount = 0;
-    if (formData.course === "BCA" || formData.course === "BSc" || formData.course === "BA") {
-      amount = formData.feeType === "Subsidized" ? 7650 : 14800;
-    } else if (formData.course === "MCA" || formData.course === "MSc" || formData.course === "MA" || formData.course === "PGDCA") {
-      amount = formData.feeType === "Subsidized" ? 25000 : 50000;
-    }
-    return amount;
-  };
-
-  const nextStep = () => {
-    if (currentStep === 1) {
-      let newErrors = { ...errors };
-      if (!formData.name) newErrors.name = "Name is required.";
-      if (!formData.email) newErrors.email = "Email is required.";
-      if (!formData.phone) newErrors.phone = "Phone is required.";
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length > 0) {
-        return;
-      }
-    } else if (currentStep === 2) {
-      let newErrors = { ...errors };
-      if (!formData.address) newErrors.address = "Address is required.";
-      if (!formData.dob) newErrors.dob = "Date of Birth is required.";
-      if (!formData.course) newErrors.course = "Course is required.";
-      if (!formData.semester) newErrors.semester = "Semester is required.";
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length > 0) {
-        return;
-      }
-    } else if (currentStep === 3) {
-      let newErrors = { ...errors };
-      if (!formData.feeType) newErrors.feeType = "Fee Type is required.";
-      if (!formData.paymentMethod) newErrors.paymentMethod = "Payment Method is required.";
-      setErrors(newErrors);
-      if (Object.keys(newErrors).length > 0) {
-        return;
-      }
-    }
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));
-  }
-  const prevStep = () => setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
-
-  const progress = (currentStep / 4) * 100;
+  const progress = (step / 3) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <>
       <Navbar />
+      <div className="container mx-auto p-8 mt-16">
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-green-600 h-2.5 rounded-full"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="text-sm text-gray-600 mt-1">
+            Step {step} of 3
+          </p>
+        </div>
 
-      <div className="container mx-auto py-10 px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white shadow-xl rounded-3xl overflow-hidden"
+          className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6"
         >
-          <div className="px-6 py-8">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-              College Admission Form
-            </h1>
-
-            {/* Progress Bar */}
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-6">
-              <motion.div
-                className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
-                style={{ width: `${progress}%` }}
-                transition={{ duration: 0.5 }}
-              ></motion.div>
-            </div>
-
+          <h1 className="text-3xl font-bold text-center mb-6 text-green-700">
+            Admission Form
+          </h1>
+          {!isSubmitted ? (
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Step 1: Basic Details */}
-              {currentStep === 1 && (
+              {/* Step 1: Personal Details */}
+              {step === 1 && (
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-6"
                 >
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                    <FaInfoCircle className="mr-2 text-blue-500" /> Basic Details
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Enter your full name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.name && <p className="text-red-500 text-xs italic">{errors.name}</p>}
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.email && <p className="text-red-500 text-xs italic">{errors.email}</p>}
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        placeholder="Enter your phone number"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.phone && <p className="text-red-500 text-xs italic">{errors.phone}</p>}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+                  <h2 className="text-2xl font-bold text-green-700">Step 1: Personal Details</h2>
 
-              {/* Step 2: Address & Course Selection */}
-              {currentStep === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                    <FaUniversity className="mr-2 text-blue-500" /> Address & Course Selection
-                  </h2>
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
-                        Address
-                      </label>
-                      <textarea
-                        id="address"
-                        name="address"
-                        placeholder="Enter your address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.address && <p className="text-red-500 text-xs italic">{errors.address}</p>}
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dob">
-                        Date of Birth
-                      </label>
-                      <DatePicker
-                        selected={formData.dob}
-                        onChange={handleDateChange}
-                        dateFormat="MMMM d, yyyy"
-                        placeholderText="Select your date of birth"
-                        className={`shadow appearance-none border ${errors.dob ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.dob && <p className="text-red-500 text-xs italic">{errors.dob}</p>}
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course">
-                        Course
-                      </label>
-                      <select
-                        id="course"
-                        name="course"
-                        value={formData.course}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.course ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      >
-                        <option value="" disabled>
-                          Select Course
+                  {/* Student Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Student Type
+                    </label>
+                    <select
+                      name="studentType"
+                      value={formData.studentType}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    >
+                      {studentTypes.map((type) => (
+                        <option key={type} value={type.toLowerCase().replace(" ", "-")}>
+                          {type}
                         </option>
-                        <option value="BCA">Bachelor of Computer Applications (BCA)</option>
-                        <option value="MCA">Master of Computer Applications (MCA)</option>
-                        <option value="BSc">Bachelor of Science (BSc)</option>
-                        <option value="MA">Master of Arts (MA)</option>
-                        <option value="MSc">Master of Science (MSc)</option>
-                        <option value="PGDCA">Post Graduate Diploma in Computer Applications (PGDCA)</option>
-                      </select>
-                      {errors.course && <p className="text-red-500 text-xs italic">{errors.course}</p>}
-                    </div>
-                    {formData.course && (
-                      <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="semester">
-                          Semester
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Search Bar for Existing Students */}
+                  {showSearchBar && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Enter Roll Number
                         </label>
-                        <select
-                          id="semester"
-                          name="semester"
-                          value={formData.semester}
-                          onChange={handleChange}
-                          className={`shadow appearance-none border ${errors.semester ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                        >
-                          <option value="" disabled>
-                            Select Semester
-                          </option>
-                          {getSemesterOptions()}
-                        </select>
-                        {errors.semester && <p className="text-red-500 text-xs italic">{errors.semester}</p>}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Enter roll number"
+                            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleSearch}
+                            className="mt-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
+                          >
+                            <FaSearch />
+                          </button>
+                        </div>
+                        {errors.rollNumber && (
+                          <p className="text-red-500 text-sm mt-1">{errors.rollNumber}</p>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
+                    </motion.div>
+                  )}
 
-              {/* Step 3: Payment and Fee Details */}
-              {currentStep === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                    <FaCreditCard className="mr-2 text-blue-500" /> Payment & Fee Details
-                  </h2>
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="feeType">
-                        Choose Fee Type
-                      </label>
-                      <select
-                        id="feeType"
-                        name="feeType"
-                        value={formData.feeType}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.feeType ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      >
-                        <option value="" disabled>
-                          Select Fee Type
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter your full name"
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
+
+                  {/* Roll Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Roll Number
+                    </label>
+                    <input
+                      type="text"
+                      name="rollNumber"
+                      value={formData.rollNumber}
+                      onChange={handleChange}
+                      placeholder="Enter your roll number"
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.rollNumber && <p className="text-red-500 text-sm mt-1">{errors.rollNumber}</p>}
+                  </div>
+
+                  {/* Semester */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Semester
+                    </label>
+                    <select
+                      name="semester"
+                      value={formData.semester}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    >
+                      {semesters.map((semester) => (
+                        <option key={semester} value={semester}>
+                          {semester}
                         </option>
-                        <option value="Subsidized">Subsidized</option>
-                        <option value="Non-Subsidized">Non-Subsidized</option>
-                      </select>
-                      {errors.feeType && <p className="text-red-500 text-xs italic">{errors.feeType}</p>}
-                    </div>
-                    {formData.feeType && (
-                      <p className="text-lg font-medium text-gray-700">
-                        Fee Amount: ₹{getFeeAmount()}
-                      </p>
-                    )}
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="paymentMethod">
-                        Select Payment Method
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Enter your email"
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="Enter your phone number"
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                  </div>
+
+                  {/* Address */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="Enter your address"
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                  </div>
+
+                  {/* Date of Birth */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      name="dob"
+                      value={formData.dob}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                      required
+                    />
+                    {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
+                  </div>
+
+                  {/* Image Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Upload Profile Picture
+                    </label>
+                    <div className="mt-1 flex items-center gap-4">
+                      <label className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                        <FaUpload className="inline-block mr-2" />
+                        Upload Image
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
                       </label>
-                      <select
-                        id="paymentMethod"
-                        name="paymentMethod"
-                        value={formData.paymentMethod}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.paymentMethod ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      >
-                        <option value="" disabled>
-                          Select Payment Method
-                        </option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Debit Card">Debit Card</option>
-                        <option value="UPI">UPI</option>
-                        <option value="Net Banking">Net Banking</option>
-                      </select>
-                      {errors.paymentMethod && <p className="text-red-500 text-xs italic">{errors.paymentMethod}</p>}
-                      {upiUnavailable && (
-                        <p className="text-red-500 mt-2">
-                          UPI is currently unavailable. Please choose another payment method.
-                        </p>
+                      {formData.image && (
+                        <img
+                          src={formData.image}
+                          alt="Profile"
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
                       )}
                     </div>
                   </div>
                 </motion.div>
               )}
 
-              {/* Step 4: ID Photo & Terms Agreement */}
-              {currentStep === 4 && (
+              {/* Step 2: Course & Fee Details */}
+              {step === 2 && (
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-6"
                 >
-                  <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
-                    <FaFileImage className="mr-2 text-blue-500" /> ID Photo & Terms Agreement
-                  </h2>
-                  <div className="space-y-4">
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="rollNumber">
-                        Roll Number
-                      </label>
-                      <input
-                        type="text"
-                        id="rollNumber"
-                        name="rollNumber"
-                        placeholder="Enter your roll number"
-                        value={formData.rollNumber}
-                        onChange={handleChange}
-                        className={`shadow appearance-none border ${errors.rollNumber ? 'border-red-500' : 'border-gray-300'} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                      />
-                      {errors.rollNumber && <p className="text-red-500 text-xs italic">{errors.rollNumber}</p>}
+                  <h2 className="text-2xl font-bold text-green-700">Step 2: Course & Fee Details</h2>
+
+                  {/* Course Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Select Course
+                    </label>
+                    <select
+                      name="course"
+                      value={formData.course}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    >
+                      {courses.map((course) => (
+                        <option key={course} value={course}>
+                          {course}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Fee Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Fee Type
+                    </label>
+                    <select
+                      name="feeType"
+                      value={formData.feeType}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    >
+                      {feeTypes.map((type) => (
+                        <option key={type} value={type.toLowerCase()}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Fee Display */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Fee Amount
+                    </label>
+                    <div className="mt-1 p-2 bg-gray-100 rounded-md">
+                      ₹ {calculateFee().toLocaleString()}
                     </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="idPhoto">
-                        Upload College ID Photo
-                      </label>
-                      <input
-                        type="file"
-                        id="idPhoto"
-                        name="idPhoto"
-                        accept="image/*"
-                        onChange={handleChange}
-                        className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      />
-                      {errors.idPhoto && <p className="text-red-500 text-xs italic">{errors.idPhoto}</p>}
-                    </div>
-                    {photoPreview && (
-                      <div className="flex justify-center mb-4">
-                        <img
-                          src={photoPreview}
-                          alt="ID Preview"
-                          className="w-40 h-40 object-cover rounded-full shadow-lg border-4 border-blue-300"
-                        />
-                      </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 3: Payment Details */}
+              {step === 3 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="space-y-6"
+                >
+                  <h2 className="text-2xl font-bold text-green-700">Step 3: Payment Details</h2>
+
+                  {/* Payment Method */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Payment Method
+                    </label>
+                    <select
+                      name="paymentMethod"
+                      value={formData.paymentMethod}
+                      onChange={handleChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                    >
+                      {paymentMethods.map((method) => (
+                        <option key={method} value={method.toLowerCase().replace(" ", "-")}>
+                          {method}
+                        </option>
+                      ))}
+                    </select>
+                    {formData.paymentMethod !== "at-college" && (
+                      <p className="text-red-500 text-sm mt-2">
+                        This payment method is not available. Please pay at the college.
+                      </p>
                     )}
-                    <div className="mb-4 flex items-center">
-                      <input
-                        type="checkbox"
-                        id="agree"
-                        name="agree"
-                        checked={formData.agree}
-                        onChange={handleChange}
-                        className="mr-2 leading-tight"
-                      />
-                      <label className="text-sm text-gray-700" htmlFor="agree">
-                        I agree to the terms and conditions
-                      </label>
-                      {errors.agree && <p className="text-red-500 text-xs italic">{errors.agree}</p>}
-                    </div>
                   </div>
                 </motion.div>
               )}
 
               {/* Navigation Buttons */}
               <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                {currentStep === 4 ? (
+                {step > 1 && (
                   <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="button"
+                    onClick={() => setStep(step - 1)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-300"
                   >
-                    Submit
+                    Previous
+                  </button>
+                )}
+                {step < 3 ? (
+                  <button
+                    type="button"
+                    onClick={() => setStep(step + 1)}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
+                  >
+                    Next
                   </button>
                 ) : (
                   <button
-                    type="button"
-                    onClick={nextStep}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
                   >
-                    Next
+                    Submit
                   </button>
                 )}
               </div>
             </form>
-
-            {/* Success Message */}
-            {formSubmitted && (
-              <div className="mt-6 text-green-600 text-center text-xl font-semibold flex items-center justify-center">
-                <FaCheckCircle className="mr-2" /> Your application has been submitted successfully!
-              </div>
-            )}
-          </div>
-
-          {/* Receipt */}
-          {showReceipt && <Receipt formData={formData} photoPreview={photoPreview} />}
+          ) : (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-green-700 mb-4">Admission Successful!</h2>
+              <Receipt formData={formData} photoPreview={photoPreview} />
+            </div>
+          )}
         </motion.div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default Admission;
+export default AdmissionForm;

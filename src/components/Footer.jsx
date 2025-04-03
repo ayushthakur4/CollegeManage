@@ -93,7 +93,7 @@ const Footer = () => {
       {/* Copyright Notice */}
       <div className="w-full text-center mt-8 border-t pt-6">
         <p className="text-sm text-base-content/60">
-          © {new Date().getFullYear()} Your Company. All rights reserved.
+          © {new Date().getFullYear()} Ayush Thakur. All rights reserved.
         </p>
       </div>
     </footer>

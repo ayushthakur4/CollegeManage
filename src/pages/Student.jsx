@@ -66,7 +66,7 @@ const Student = () => {
     XLSX.writeFile(wb, `${selectedStudent.name}_Attendance.xlsx`);
   }, [selectedStudent]);
 
-  const handleDownloadResult = useCallback(() => {  // useCallback added here
+  const handleDownloadResult = useCallback(() => {
     if (selectedStudent?.resultFileContent) {
       const a = document.createElement("a");
       a.href = selectedStudent.resultFileContent;
@@ -77,9 +77,9 @@ const Student = () => {
 
   const getMarksColor = (marks, maxMarks) => {
     const percentage = (marks / maxMarks) * 100;
-    if (percentage >= 80) return 'bg-green-500';
-    if (percentage >= 50) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (percentage >= 80) return '#22c55e'; // Green
+    if (percentage >= 50) return '#f59e0b'; // Yellow
+    return '#ef4444'; // Red
   };
 
   const barData = {
@@ -306,14 +306,19 @@ const Student = () => {
               >
                 <FaDownload className="mr-2" /> Export Attendance
               </button>
-              {selectedStudent.resultFileContent && ( // Check if result file content exists
-                <button
-                  onClick={handleDownloadResult}
-                  disabled={loading}
-                  className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? <Loader size="small" /> : <><FaDownload className="mr-2" /> Download Report</>}
-                </button>
+              {selectedStudent.resultFileContent ? (
+                <div className="flex items-center gap-2">
+                  <p className="text-green-600 font-semibold">Result is available!</p>
+                  <button
+                    onClick={handleDownloadResult}
+                    disabled={loading}
+                    className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? <Loader size="small" /> : <><FaDownload className="mr-2" /> Download Report</>}
+                  </button>
+                </div>
+              ) : (
+                <p className="text-gray-500 font-semibold">No result available.</p>
               )}
             </div>
           </motion.div>

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import logo from "../assets/hpu1.webp"; // Ensure this is optimized (e.g., WebP format)
-import loginImage from "../assets/login.jpg"; // Import the new login image
+import { motion } from "framer-motion";
+import { FaUser, FaLock, FaHome, FaExclamationCircle, FaSignInAlt, FaGraduationCap } from "react-icons/fa";
+import { IoMdSwitch } from "react-icons/io";
+import logo from "../assets/hpu1.webp"; // Your logo file
 
 const Admin = () => {
   const [username, setUsername] = useState("");
@@ -11,166 +13,206 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const quotes = [
+    "Education is the passport to the future, for tomorrow belongs to those who prepare for it today.",
+    "Learning is a treasure that will follow its owner everywhere.",
+    "The beautiful thing about learning is that no one can take it away from you."
+  ];
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    if (
-      (isAdmin && username === "admin" && password === "1234") ||
-      (!isAdmin && username === "student" && password === "1234")
-    ) {
+    
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    if ((isAdmin && username === "admin" && password === "1234") ||
+        (!isAdmin && username === "student" && password === "1234")) {
       navigate(isAdmin ? "/dash" : "/student");
     } else {
-      setError("Invalid credentials. Please try again.");
+      setError("Invalid credentials");
     }
     setLoading(false);
   };
 
+  // Dynamic color variables
+  const primaryColor = isAdmin ? 'green' : 'blue';
+  const gradientFrom = isAdmin ? 'from-green-600' : 'from-blue-600';
+  const gradientTo = isAdmin ? 'to-green-800' : 'to-blue-800';
+  const focusRing = isAdmin ? 'focus:ring-green-500' : 'focus:ring-blue-500';
+  const buttonGradientFrom = isAdmin ? 'from-green-500' : 'from-blue-500';
+  const buttonGradientTo = isAdmin ? 'to-green-600' : 'to-blue-600';
+  const buttonHoverFrom = isAdmin ? 'hover:from-green-400' : 'hover:from-blue-400';
+  const buttonHoverTo = isAdmin ? 'hover:to-green-500' : 'hover:to-blue-500';
+  const iconColor = isAdmin ? 'text-green-400' : 'text-blue-400';
+  const borderColor = isAdmin ? 'border-green-500/20' : 'border-blue-500/20';
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      {/* Login Container */}
-      <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Left  Image */}
-        <div className="hidden md:block w-full md:w-1/2 relative">
-          <img
-            src={loginImage}
-            alt="Login Illustration"
-            className="w-full h-full object-cover"
+    <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-${primaryColor}-900 p-4`}>
+      {/* Glassmorphism Card with Dynamic Color */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`w-full max-w-md bg-white/5 backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden border border-white/10 ${isAdmin ? 'hover:shadow-green-500/20' : 'hover:shadow-blue-500/20'} transition-all`}
+      >
+        {/* Logo and Quote Section */}
+        <div className="p-4 flex flex-col items-center bg-black/20">
+          <motion.img 
+            src={logo} 
+            alt="Institution Logo"
+            className="h-12 mb-3"
+            whileHover={{ scale: 1.05 }}
           />
+          <motion.div 
+            className="text-center text-white/80 text-xs italic"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            "{randomQuote}"
+          </motion.div>
         </div>
 
-        {/* Right Side: Login Form */}
-        <div className="w-full md:w-1/2 p-8 space-y-6">
-          {/* Header */}
-          <div className="text-center">
-            <img src={logo} alt="Logo" className="h-16 w-auto mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-800">
-              {isAdmin ? "Admin Portal" : "Student Gateway"}
+        {/* Animated Header with Glow Effect */}
+        <motion.div 
+          className={`relative p-4 bg-gradient-to-r ${gradientFrom} ${gradientTo}`}
+          whileHover={{ scale: 1.01 }}
+        >
+          <div className={`absolute -inset-1 bg-${primaryColor}-500 rounded-lg blur opacity-20 animate-pulse`}></div>
+          <div className="relative z-10 flex items-center justify-center gap-2">
+            <FaGraduationCap className="text-white/90" />
+            <h1 className="text-xl font-bold text-white text-center">
+              {isAdmin ? "ADMIN PORTAL" : "STUDENT PORTAL"}
             </h1>
-            <p className="text-sm text-gray-600">Welcome! Log in to access your account.</p>
           </div>
+        </motion.div>
 
-          {/* Role Selector */}
-          <div className="flex gap-2 bg-blue-50 p-1 rounded-full">
+        {/* Form Container */}
+        <div className="p-6 space-y-5">
+          {/* Animated Role Switch */}
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex justify-center"
+          >
             <button
-              onClick={() => setIsAdmin(true)}
-              className={`flex-1 py-2 rounded-full transition-all ${
-                isAdmin
-                  ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow"
-                  : "text-blue-600 hover:bg-blue-100"
-              }`}
+              onClick={() => setIsAdmin(!isAdmin)}
+              className={`flex items-center gap-2 px-4 py-2 bg-black/30 rounded-full text-white text-sm border border-white/20 hover:bg-white/10 transition-all ${isAdmin ? 'hover:text-green-300' : 'hover:text-blue-300'}`}
             >
-              Admin
+              <IoMdSwitch className="text-lg" />
+              Switch to {isAdmin ? "Student" : "Admin"}
             </button>
-            <button
-              onClick={() => setIsAdmin(false)}
-              className={`flex-1 py-2 rounded-full transition-all ${
-                !isAdmin
-                  ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow"
-                  : "text-blue-600 hover:bg-blue-100"
-              }`}
-            >
-              Student
-            </button>
-          </div>
+          </motion.div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-100 text-red-700 p-3 rounded-lg flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center bg-red-400/20 text-red-200 p-3 rounded-lg border border-red-400/30 text-sm"
+            >
+              <FaExclamationCircle className="mr-2 animate-pulse" />
               {error}
-            </div>
+            </motion.div>
           )}
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Username Field */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 absolute top-3 left-3 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clipRule="evenodd"
+            <motion.div 
+              whileHover={{ x: 3 }}
+              className="space-y-2"
+            >
+              <div className="relative">
+                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${iconColor}`}>
+                  <FaUser />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 bg-black/20 text-white placeholder-gray-400 rounded-lg border border-white/10 focus:outline-none focus:ring-2 ${focusRing} focus:border-transparent transition-all`}
+                  required
                 />
-              </svg>
-            </div>
+              </div>
+            </motion.div>
 
             {/* Password Field */}
-            <div className="relative">
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 absolute top-3 left-3 text-gray-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
+            <motion.div 
+              whileHover={{ x: 3 }}
+              className="space-y-2"
+            >
+              <div className="relative">
+                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${iconColor}`}>
+                  <FaLock />
+                </div>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-3 bg-black/20 text-white placeholder-gray-400 rounded-lg border border-white/10 focus:outline-none focus:ring-2 ${focusRing} focus:border-transparent transition-all`}
+                  required
                 />
-              </svg>
-            </div>
+              </div>
+            </motion.div>
 
             {/* Submit Button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold rounded-lg transition-all hover:from-blue-700 hover:to-blue-900"
+              className={`w-full py-3 rounded-lg font-medium transition-all ${
+                loading 
+                  ? `bg-${primaryColor}-600 cursor-not-allowed` 
+                  : `bg-gradient-to-r ${buttonGradientFrom} ${buttonGradientTo} ${buttonHoverFrom} ${buttonHoverTo}`
+              } text-white shadow-lg flex items-center justify-center gap-2`}
             >
-              {loading ? "Signing In..." : "Sign In"}
-            </button>
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Authenticating...
+                </>
+              ) : (
+                <>
+                  <FaSignInAlt />
+                  Sign In
+                </>
+              )}
+            </motion.button>
           </form>
 
           {/* Home Button */}
-          <div className="text-center mt-4">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center pt-2"
+          >
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 border border-blue-600 rounded-lg text-blue-600 hover:bg-blue-50 transition-all"
+              className={`inline-flex items-center gap-2 px-4 py-2 text-sm text-white/80 hover:text-white transition-all ${isAdmin ? 'hover:text-green-300' : 'hover:text-blue-300'}`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-              Back to Home
+              <FaHome />
+              Return to Homepage
             </Link>
+          </motion.div>
+        </div>
+
+        {/* Futuristic Footer with Dynamic Color */}
+        <div className={`p-3 bg-black/20 text-center text-xs text-white/50 border-t ${borderColor}`}>
+          <div className="flex justify-center items-center gap-4">
+            <span className={`h-2 w-2 rounded-full bg-${primaryColor}-500 animate-pulse`}></span>
+            <span>Secure Access  • {new Date().getFullYear()}</span>
+            <span className={`h-2 w-2 rounded-full bg-${primaryColor}-500 animate-pulse`}></span>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
