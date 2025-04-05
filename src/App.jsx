@@ -17,13 +17,10 @@ import StudentLogin from './pages/StudentLogin';
 import TaskManagement from './pages/TaskManagement'; 
 import LearnMore from './pages/learnmore.jsx';
 
-
-
 function Home() {
   const whatWeAreRef = useRef(null);
 
   const scrollToWhatWeAre = () => {
-    
     if (whatWeAreRef.current) {
       whatWeAreRef.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -57,13 +54,9 @@ function App() {
         <Route path="/tasks" element={<TaskManagement />} />
         <Route path="/learn" element={<LearnMore />} />
         <Route path="/goto" element={<WhatWeAre />} />
-        
-      
       </Routes>
       <Footer />
-
     </div>
-
   );
 }
 
