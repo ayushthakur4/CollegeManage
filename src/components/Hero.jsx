@@ -184,7 +184,7 @@ const Hero = () => {
             {[
               { value: "99.9%", label: "Uptime" },
               { value: "3s", label: "Load Time" },
-              { value: "AI", label: "Powered" },
+              { value: "500+", label: "USERS PER DAY" },
               { value: "24/7", label: "Support" }
             ].map((stat, index) => (
               <div key={index} className="bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-green-400/10 text-center">
