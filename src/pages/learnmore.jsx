@@ -150,7 +150,7 @@ const LearnMore = () => {
                     <img src={UjjwalBhardwajImage} alt="Ujjwal Bhardwaj" className="w-16 h-16 rounded-xl object-cover mr-4 border-2 border-green-200" />
                     <div>
                       <h4 className="font-bold text-lg">Ujjwal Bhardwaj</h4>
-                      <div className="text-green-600 text-sm font-medium mb-2">QA Engineer & Technical Writer</div>
+                      <div className="text-green-600 text-sm font-medium mb-2"> Technical Writer</div>
                       <div className="text-gray-600 text-sm">
                         <p>Roll No: 22BC003 | ID: 6220090037</p>
                         <p className="mt-1">Responsible for testing protocols, security, and system documentation.</p>
