@@ -41,11 +41,11 @@ const LearnMore = () => {
 
   const features = [
     { icon: <FaUserGraduate className="w-8 h-8" />, title: "Online Admission", description: "Eliminated offline paper work and  Hustel." },
-    { icon: <FaBell className="w-8 h-8" />, title: "Smart Notices", description: "Priority-based notification system with read receipts." },
-    { icon: <FaChartLine className="w-8 h-8" />, title: "Analytics", description: "Predictive performance modeling with visualization." },
-    { icon: <FaClipboardCheck className="w-8 h-8" />, title: " Attendance", description: " recognition with geofencing technology." },
-    { icon: <FaBook className="w-8 h-8" />, title: "Digital Library", description: "Augmented reality course materials." },
-    { icon: <FaUsers className="w-8 h-8" />, title: "Collaboration", description: "Real-time document co-authoring tools." },
+    { icon: <FaBell className="w-8 h-8" />, title: "Smart Notices", description: "notification system ." },
+    { icon: <FaChartLine className="w-8 h-8" />, title: "Analytics", description: " performance modeling with visualization." },
+    { icon: <FaClipboardCheck className="w-8 h-8" />, title: " Attendance", description: " Percise attendance." },
+    { icon: <FaBook className="w-8 h-8" />, title: "Digital Library", description: " course materials." },
+    { icon: <FaUsers className="w-8 h-8" />, title: "Collaboration", description: "tools." },
   ];
 
   return (

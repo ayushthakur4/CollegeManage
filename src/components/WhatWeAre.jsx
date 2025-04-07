@@ -132,17 +132,17 @@ const WhatWeAre = () => {
             {[
               {
                 title: "Attendance Tracking",
-                content: "AI-powered facial recognition with geofencing technology for precise attendance monitoring.",
+                content: " Precise attendance monitoring.",
                 icon: <FaClipboardCheck className="w-10 h-10" />
               },
               {
                 title: "Performance Insights",
-                content: "Predictive analytics and personalized learning recommendations for student success.",
+                content: "Can moniter their performance.",
                 icon: <FaChartLine className="w-10 h-10" />
               },
               {
                 title: "Result Management",
-                content: "Blockchain-secured academic records with instant verification capabilities.",
+                content: " With academic records capabilities.",
                 icon: <FaUserGraduate className="w-10 h-10" />
               },
             ].map((pillar, index) => (
