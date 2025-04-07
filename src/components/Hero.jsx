@@ -86,7 +86,7 @@ const Hero = () => {
 
   const features = [
     { icon: <FaClipboardCheck className="w-6 h-6" />, text: "Smart Attendance Tracking" },
-    { icon: <FaChartLine className="w-6 h-6" />, text: "AI Performance Insights" },
+    { icon: <FaChartLine className="w-6 h-6" />, text: " Performance Insights" },
     { icon: <FaUserGraduate className="w-6 h-6" />, text: "Student Analytics" },
     { icon: <FaMobileAlt className="w-6 h-6" />, text: "Cross-Platform Access" }
   ];
@@ -144,7 +144,7 @@ const Hero = () => {
             variants={fadeIn}
             transition={{ delay: 0.3 }}
           >
-            A next-generation platform leveraging AI to monitor student engagement, predict academic outcomes, and optimize institutional performance.
+            A next-generation platform  to monitor student engagement, predict academic outcomes, and optimize institutional performance.
           </motion.p>
 
           {/* Buttons */}

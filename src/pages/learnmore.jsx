@@ -34,13 +34,13 @@ const LearnMore = () => {
 
   const techStack = [
     { icon: <FaLaptopCode className="w-6 h-6" />, name: "React JS", category: "Frontend" },
-    { icon: <FaServer className="w-6 h-6" />, name: "Node.js", category: "Backend" },
+    { icon: <FaServer className="w-6 h-6" />, name: "Local host", category: "Backend" },
     { icon: <BsGearFill className="w-6 h-6" />, name: "Tailwind CSS", category: "style" },
-    { icon: <BsLightningFill className="w-6 h-6" />, name: "Vercel", category: "Database" },
+    { icon: <BsLightningFill className="w-6 h-6" />, name: "Vercel", category: "Hosting" },
   ];
 
   const features = [
-    { icon: <FaUserGraduate className="w-8 h-8" />, title: "Online Admission", description: "AI-powered application processing with real-time tracking." },
+    { icon: <FaUserGraduate className="w-8 h-8" />, title: "Online Admission", description: "Eliminated offline paper work and  Hustel." },
     { icon: <FaBell className="w-8 h-8" />, title: "Smart Notices", description: "Priority-based notification system with read receipts." },
     { icon: <FaChartLine className="w-8 h-8" />, title: "Analytics", description: "Predictive performance modeling with visualization." },
     { icon: <FaClipboardCheck className="w-8 h-8" />, title: " Attendance", description: " recognition with geofencing technology." },
@@ -78,7 +78,7 @@ const LearnMore = () => {
             transition={{ duration: 0.8 }}
           >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-green-100">
-              Campus Pro
+              Student Management System
             </span>
           </motion.h1>
           <motion.p 
@@ -97,7 +97,6 @@ const LearnMore = () => {
           >
             <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
               <IoMdRocket className="mr-2 animate-pulse" />
-              Version 2.0 Released Soon
             </div>
           </motion.div>
         </div>
