@@ -163,16 +163,6 @@ const Hero = () => {
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-green-600 to-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             </Link>
-            <button
-              onClick={() => setShowHighlights(!showHighlights)}
-              className="relative inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-transparent border-2 border-green-400/50 rounded-lg hover:bg-green-900/20 transition-all duration-300 shadow-lg group overflow-hidden"
-            >
-              <span className="relative z-10 flex items-center">
-                {showHighlights ? 'Hide Features' : 'Show Features'}
-                <FaArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-              </span>
-              <span className="absolute inset-0 bg-green-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            </button>
           </motion.div>
 
           {/* Stats */}
